@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse All Certifications - IT Certification Practice SaaS</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <style>
+        .certifications-container {
+            display: flex;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        .providers-list {
+            flex: 1;
+            max-width: 300px;
+            height: 70vh;
+            overflow-y: auto;
+            background-color: var(--card-background);
+            border-radius: 10px;
+            padding: 1rem;
+            box-shadow: var(--card-shadow);
+        }
+        .provider-item {
+            padding: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .provider-item:hover, .provider-item.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 5px;
+        }
+        .exams-container {
+            flex: 2;
+        }
+        .search-container {
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: center;
+        }
+        .search-container input {
+            width: 60%;
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            border: 2px solid var(--primary-color);
+            border-radius: 5px 0 0 5px;
+            background-color: var(--card-background);
+            color: var(--text-color);
+        }
+        .search-container button {
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 0 5px 5px 0;
+            cursor: pointer;
+        }
+        .cert-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+        .cert-item {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            background-color: var(--card-background);
+            border-radius: 10px;
+            padding: 1rem;
+            box-shadow: var(--card-shadow);
+        }
+        .cert-item .cta-button {
+            margin-top: auto;
+        }
+    </style>
+</head>
+<body class="dark-theme">
+    <header>
+        <nav>
+            <div class="logo">IT Cert Practice</div>
+            <ul>
+                <li><a href="index.html#features">Features</a></li>
+                <li><a href="index.html#how-it-works">How It Works</a></li>
+                <li><a href="index.html#certifications">Certifications</a></li>
+                <li><a href="index.html#pricing">Pricing</a></li>
+            </ul>
+            <div class="nav-buttons">
+                <a href="#" class="cta-button secondary">Log In</a>
+                <a href="signup.html" class="cta-button">Sign Up</a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section id="all-certifications">
+            <h1>Browse All Certifications</h1>
+            <div class="search-container">
+                <input type="text" id="cert-search" placeholder="Search for certifications...">
+                <button onclick="searchCertifications()"><i class="fas fa-search"></i></button>
+            </div>
+            
+            <div class="certifications-container">
+                <div class="providers-list" id="providers-list">
+                    <!-- Provider list will be populated dynamically -->
+                </div>
+                <div class="exams-container" id="exams-container">
+                    <!-- Exams for selected provider will be shown here -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About Us</h3>
+                <p>We're dedicated to helping IT professionals succeed in their certification journey.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Contact Us</a></li>
+                    <li><a href="#">FAQs</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Connect With Us</h3>
+                <div class="social-icons">
+                    <a href="#" class="social-icon"><i class="fab fa-linkedin"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-facebook"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+        </div>
+        <p class="copyright">&copy; 2024 IT Certification Practice SaaS. All rights reserved.</p>
+    </footer>
+
+    <script>
+        const providers = [
+            { name: "Microsoft", exams: [
+                { name: "Microsoft Azure Administrator", description: "Become an expert in Microsoft's cloud platform" },
+                { name: "Microsoft Azure Developer", description: "Master cloud development with Azure" },
+                { name: "Microsoft 365 Certified: Enterprise Administrator Expert", description: "Become a Microsoft 365 expert" },
+                // Add more Microsoft exams here
+            ]},
+            { name: "Amazon Web Services (AWS)", exams: [
+                { name: "AWS Certified Solutions Architect", description: "Master cloud computing with Amazon Web Services" },
+                { name: "AWS Certified Developer", description: "Develop and maintain AWS-based applications" },
+                { name: "AWS Certified SysOps Administrator", description: "Manage and operate systems on AWS" },
+                // Add more AWS exams here
+            ]},
+            { name: "Databricks", exams: [
+                { name: "Databricks Certified Associate Developer", description: "Develop data solutions using Databricks" },
+                { name: "Databricks Certified Data Engineer Associate", description: "Design and implement data engineering solutions" },
+                // Add more Databricks exams here
+            ]},
+            // Add more providers here
+        ];
+
+        function populateProviders() {
+            const providersList = document.getElementById('providers-list');
+            providers.forEach((provider, index) => {
+                const providerItem = document.createElement('div');
+                providerItem.classList.add('provider-item');
+                providerItem.textContent = provider.name;
+                providerItem.onclick = () => showExams(index);
+                providersList.appendChild(providerItem);
+            });
+        }
+
+        function showExams(providerIndex) {
+            const examsContainer = document.getElementById('exams-container');
+            const provider = providers[providerIndex];
+            
+            examsContainer.innerHTML = `<h2>${provider.name} Certifications</h2>`;
+            
+            const certGrid = document.createElement('div');
+            certGrid.classList.add('cert-grid');
+            
+            provider.exams.forEach(exam => {
+                const examItem = createExamItem(provider.name, exam);
+                certGrid.appendChild(examItem);
+            });
+            
+            examsContainer.appendChild(certGrid);
+
+            document.querySelectorAll('.provider-item').forEach((item, index) => {
+                item.classList.toggle('active', index === providerIndex);
+            });
+        }
+
+        function createExamItem(providerName, exam) {
+            const examItem = document.createElement('div');
+            examItem.classList.add('cert-item');
+            examItem.innerHTML = `
+                <img src="https://via.placeholder.com/150x100?text=${providerName}+Logo" alt="${providerName}">
+                <h3>${exam.name}</h3>
+                <p>${exam.description}</p>
+                <a href="#" class="cta-button">Start Practice</a>
+            `;
+            return examItem;
+        }
+
+        function searchCertifications() {
+            const searchTerm = document.getElementById('cert-search').value.toLowerCase();
+            const examsContainer = document.getElementById('exams-container');
+            
+            examsContainer.innerHTML = '<h2>Search Results</h2>';
+            const certGrid = document.createElement('div');
+            certGrid.classList.add('cert-grid');
+
+            providers.forEach(provider => {
+                provider.exams.forEach(exam => {
+                    if (exam.name.toLowerCase().includes(searchTerm) || 
+                        exam.description.toLowerCase().includes(searchTerm) ||
+                        provider.name.toLowerCase().includes(searchTerm)) {
+                        const examItem = createExamItem(provider.name, exam);
+                        certGrid.appendChild(examItem);
+                    }
+                });
+            });
+
+            examsContainer.appendChild(certGrid);
+
+            // Clear active state from provider list
+            document.querySelectorAll('.provider-item').forEach(item => {
+                item.classList.remove('active');
+            });
+        }
+
+        // Initialize the page
+        populateProviders();
+        showExams(0); // Show the first provider's exams by default
+
+        // Add event listener for real-time search
+        document.getElementById('cert-search').addEventListener('input', searchCertifications);
+    </script>
+</body>
+</html>
